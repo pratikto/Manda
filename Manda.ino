@@ -1,10 +1,11 @@
-﻿/*
+/*
  Name:		Sensor.ino
  Created:	5/22/2020 10:14:16 PM
  Author:	Pratikto Sulthoni Hidayat
 */
 #include "sensor.h"
 #include "functCollection.h"
+#include "PeakDetector.h"
 
 //Pin configuration
 int pressurePin = A0;

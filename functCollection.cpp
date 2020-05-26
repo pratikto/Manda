@@ -10,7 +10,7 @@ void generate60Hz_Timer1() {
     TCCR1B = 0;// same for TCCR1B
     TCNT1 = 0;//initialize counter value to 0
     // set compare match register for 60 hz increments
-    OCR1A = 16000000 / (60 * 1024) - 1;// (must be < 65536)
+    OCR1A = 259;//  16000000 / (60 * 1024) - 1;// (must be < 65536)
     // turn on CTC mode
     TCCR1B |= (1 << WGM12);
     // Set CS10 and CS12 bits for 1024 prescaler

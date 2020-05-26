@@ -22,6 +22,14 @@ class Sensor : public PeakDetector
 	 float _PPEP;
 	 //peak indicator
 	 int _peak;
+	 //sum of value in one periode
+	 float _sumValue;
+	 //value counter in one periode 
+	 float _countValue;
+	 //wave periode
+	 float _periode;
+	 //breath per minute
+	 float _breathPerMinute;
 
  public:
 	 //constructor
@@ -57,6 +65,9 @@ class Sensor : public PeakDetector
 	 
 	 //return crest, through, or no-peak
 	 int peak();
+
+	 //return breath per minute value
+	 float breathPerMinute();
 };
 
 #endif
