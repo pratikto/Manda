@@ -30,6 +30,11 @@ class Sensor : public PeakDetector
 	 float _periode;
 	 //breath per minute
 	 float _breathPerMinute;
+	 //wave area
+	 float _area;
+	 //axis deviation
+	 float _xDev;
+
 
  public:
 	 //constructor
