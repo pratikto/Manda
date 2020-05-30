@@ -69,14 +69,22 @@ int Sensor::detect(float sample) {
 	//call detect() function from its base class, PeakDetector.
 	PeakDetector::detect( sample);
 
+	//update sumValue & _countValue
+	_sumValue = _sumValue + sample;
+	_countValue++;
+
 	//calculate tidal Volume
 	//tidal Volume = sum of (value *  T_sampling) = sum of (value / f_sampling) 
-	_tidalVolume = _tidalVolume + ( abs(sample - _xDev) / 30.0 );
+	_VolumeAcc = _VolumeAcc + ( abs(sample - _xDev) / 30.0 );
 
 	//crest is detected
 	if (_peak = CREST) {
 		//assign _PPeak if crest is detected
 		_PPeak = sample;
+
+		//assign volume accumulator to tidal volume, then reset the volume accumulator
+		_tidalVolume = _VolumeAcc;
+		_VolumeAcc = 0.0;
 		
 		//calculate T (wave Periode). T = 1/f_sampling * _countValue;
 		_periode = (float) _countValue / 30.0;
@@ -96,15 +104,10 @@ int Sensor::detect(float sample) {
 	else if (_peak = THROUGH) {
 		//assign _PPEP if througn is detected
 		_PPEP = sample;
-		//update sumValue & _countValue
-		_sumValue = _sumValue + sample;
-		_countValue++;
 	}
 	//nopeak is detected
 	else {
-		//update sumValue & _countValue
-		_sumValue = _sumValue + sample;
-		_countValue++;
+
 	}
 
 	return _peak;

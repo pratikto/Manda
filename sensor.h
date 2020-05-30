@@ -32,6 +32,7 @@ class Sensor : public PeakDetector
 	 float _breathPerMinute;
 	 //absolute area of tidal volume
 	 float _tidalVolume;
+	 float _VolumeAcc;
 	 //axis deviation
 	 float _xDev;
 

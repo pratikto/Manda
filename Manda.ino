@@ -59,10 +59,17 @@ void loop() {
         // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
         Flow.value = analogRead(flowPin) * (5.0 / 1023.0);
         Pressure.value = analogRead(pressurePin) * (5.0 / 1023.0);
-
+        
         //detect crest, throuh, and no peak.
-        //if result is crest, then the voltage measurement is stored in PPeak
-        //if result is through, then the voltage measurement is stored in PPEP
+        //
+        //if result is 'CREST', then 
+        //  (1)the voltage measurement is stored in PPeak
+        //  (2)calculate the wave periode
+        //  (3)calculate breath per minute (BPM)
+        //  (4)calculate wave amplitude average each periode (PAverage)
+        //  (5)calculate tidal volume
+        //if result is 'THROUGH', then 
+        //  (6)the voltage measurement is stored in PPEP
         Flow.detect();
         Pressure.detect();
 
