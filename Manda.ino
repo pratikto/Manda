@@ -38,6 +38,9 @@ Sensor Flow(LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
 void setup() {
     //stop interrupts
     cli();
+
+    // initialize digital pin LED_BUILTIN as FSampling clock indicator
+    pinMode(LED_BUILTIN, OUTPUT);
     
     //timer1 initialization
     generate60Hz_Timer1();
@@ -56,6 +59,9 @@ ISR(TIMER1_COMPA_vect) {
 // the loop function runs over and over again until power down or reset
 void loop() {
     if (clock30Hz) {
+        //FSampling clock indicator
+        digitalWrite(LED_BUILTIN, clock30Hz);
+
         // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
         Flow.value = analogRead(flowPin) * (5.0 / 1023.0);
         Pressure.value = analogRead(pressurePin) * (5.0 / 1023.0);
