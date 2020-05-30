@@ -30,8 +30,8 @@ class Sensor : public PeakDetector
 	 float _periode;
 	 //breath per minute
 	 float _breathPerMinute;
-	 //wave area
-	 float _area;
+	 //absolute area of tidal volume
+	 float _tidalVolume;
 	 //axis deviation
 	 float _xDev;
 
@@ -42,6 +42,9 @@ class Sensor : public PeakDetector
 	 
 	 //constructor
 	 Sensor(const int lag, const float threshold, const float influence);
+
+	 //constructor
+	 Sensor(const float xDev, const int lag, const float threshold, const float influence);
 	 
 	 //read sensor and doing calculation
 	 bool read(float value);

@@ -4,14 +4,38 @@
 
 #include "sensor.h"
 
-Sensor::Sensor() : PeakDetector(_lag = 5, _threshold = 3.5, _influence = 0.5) {
-
+Sensor::Sensor() : 
+	PeakDetector(_lag = 5, _threshold = 3.5, _influence = 0.5) 
+{
+	_tidalVolume = 0.0;
+	_breathPerMinute = 0.0;
+	_xDev = 0.0;
+	_countValue = 0.0;
+	_sumValue = 0.0;
+	_periode = 0.0;
 }
 
 Sensor::Sensor(const int lag, const float threshold, const float influence) : 
 	PeakDetector(_lag = lag, _threshold = threshold, _influence = influence)
 {
-	_area = 0.0;
+	_tidalVolume = 0.0;
+	_breathPerMinute = 0.0;
+	_xDev = 0.0;
+	_countValue = 0.0;
+	_sumValue = 0.0;
+	_periode = 0.0;
+}
+
+//constructor
+Sensor::Sensor(const float xDev, const int lag, const float threshold, const float influence) :
+	PeakDetector(_lag = lag, _threshold = threshold, _influence = influence)
+{
+	_tidalVolume = 0.0;
+	_breathPerMinute = 0.0;
+	_xDev = xDev;
+	_countValue = 0.0;
+	_sumValue = 0.0;
+	_periode = 0.0;
 }
 
 //read sensor and doing calculation
@@ -47,7 +71,7 @@ int Sensor::detect(float sample) {
 
 	//calculate tidal Volume
 	//tidal Volume = sum of (value *  T_sampling) = sum of (value / f_sampling) 
-	_area = _area + ( abs(sample - _xDev) / 30.0 );
+	_tidalVolume = _tidalVolume + ( abs(sample - _xDev) / 30.0 );
 
 	//crest is detected
 	if (_peak = CREST) {
@@ -63,9 +87,9 @@ int Sensor::detect(float sample) {
 		//calculate _PAverage every time a crest is detected
 		_PAverage = _sumValue / _countValue;
 		
-		//reset _area, _sumValue & _countValue to zero
-		_area;
-		_sumValue = 0;
+		//reset _tidalVolume, _sumValue & _countValue to zero
+		_tidalVolume = 0.0;
+		_sumValue = 0.0;
 		_countValue = 0;
 	}
 	//through is detected

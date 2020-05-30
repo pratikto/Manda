@@ -13,6 +13,7 @@
 #define samplingRate    = 30 //Hz
 #define megaFrequency   = 16000000 //Hz
 #define prescalerTimer  = 1024
+
 void generate60Hz_Timer1(); 
 void generate30Hz_Timer1();
 bool generate1Hz_Timer1();
