@@ -70,9 +70,24 @@ void loop() {
         //  (5)calculate tidal volume
         //if result is 'THROUGH', then 
         //  (6)the voltage measurement is stored in PPEP
+        //if result is 'NOPEAK', then
+        //  (7)increment countValue & sumValue
+        //  (8)calculate volumeAcc
         Flow.detect();
         Pressure.detect();
 
+        //write result to serial monitor
+        Serial.print("Flow PPeak : "); Serial.print(Flow.PPeak());
+        Serial.print("\tPressure PPeak : "); Serial.print(Pressure.PPeak());
+        Serial.print("\tFlow PAvg : "); Serial.print(Flow.PAverage());
+        Serial.print("\tPressure PAvg : "); Serial.print(Pressure.PAverage());
+        Serial.print("\tFlow PEEP : "); Serial.print(Flow.PPEP());
+        Serial.print("\tPressure PEEP : "); Serial.print(Pressure.PPEP());
+        Serial.print("\tFlow BPM : "); Serial.print(Flow.PPEP());
+        Serial.print("\tPressure BPM : "); Serial.print(Pressure.PPEP());
+        Serial.print("\tFlow tidal : "); Serial.print(Flow.tidalVolume());
+        Serial.print("\tPressure tidal : "); Serial.print(Pressure.tidalVolume());
+        Serial.println();
         
     }
 }

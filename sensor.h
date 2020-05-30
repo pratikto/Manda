@@ -25,7 +25,7 @@ class Sensor : public PeakDetector
 	 //sum of value in one periode
 	 float _sumValue;
 	 //value counter in one periode 
-	 float _countValue;
+	 int _countValue;
 	 //wave periode
 	 float _periode;
 	 //breath per minute
@@ -77,6 +77,9 @@ class Sensor : public PeakDetector
 
 	 //return breath per minute value
 	 float breathPerMinute();
+
+	 //return tidal volume
+	 float tidalVolume();
 };
 
 #endif

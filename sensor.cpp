@@ -21,7 +21,7 @@ Sensor::Sensor(const int lag, const float threshold, const float influence) :
 	_tidalVolume = 0.0;
 	_breathPerMinute = 0.0;
 	_xDev = 0.0;
-	_countValue = 0.0;
+	_countValue = 0;
 	_sumValue = 0.0;
 	_periode = 0.0;
 }
@@ -143,4 +143,9 @@ int Sensor::peak() {
 //return breath per minute value
 float Sensor::breathPerMinute() {
 	return _breathPerMinute;
+}
+
+//return tidal volume
+float Sensor::tidalVolume() {
+	return _tidalVolume;
 }
