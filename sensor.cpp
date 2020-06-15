@@ -10,9 +10,14 @@ Sensor::Sensor() :
 	_tidalVolume = 0.0;
 	_breathPerMinute = 0.0;
 	_xDev = 0.0;
-	_countValue = 0.0;
+	_countValue = 0;
 	_sumValue = 0.0;
 	_periode = 0.0;
+	_PAverage = 0.0;
+	_PPEP = 0.0;
+	_VolumeAcc = 0.0;
+	_PPeak = 0.0;
+	_peak = 0;
 }
 
 Sensor::Sensor(const int lag, const float threshold, const float influence) : 
@@ -24,6 +29,11 @@ Sensor::Sensor(const int lag, const float threshold, const float influence) :
 	_countValue = 0;
 	_sumValue = 0.0;
 	_periode = 0.0;
+	_PAverage = 0.0;
+	_PPEP = 0.0;
+	_VolumeAcc = 0.0;
+	_PPeak = 0.0;
+	_peak = 0;
 }
 
 //constructor
@@ -33,34 +43,39 @@ Sensor::Sensor(const float xDev, const int lag, const float threshold, const flo
 	_tidalVolume = 0.0;
 	_breathPerMinute = 0.0;
 	_xDev = xDev;
-	_countValue = 0.0;
+	_countValue = 0;
 	_sumValue = 0.0;
 	_periode = 0.0;
+	_PAverage = 0.0;
+	_PPEP = 0.0;
+	_VolumeAcc = 0.0;
+	_PPeak = 0.0;
+	_peak = 0;
 }
 
 //read sensor and doing calculation
 bool Sensor::read(float tempValue) {
 	detect(tempValue);
-	if (_peak = CREST) {
+	if (_peak == CREST) {
 		_PPeak = tempValue;
 	}
-	else if (_peak = THROUGH) {
+	else if (_peak == THROUGH) {
 		_PPEP = tempValue;
 	}
 	return _peak;
 }
 
 //read sensor and doing calculation
-bool Sensor::read() {
-	detect(value);
-	if (_peak = CREST) {
-		_PPeak = value;
-	}
-	else if (_peak = THROUGH) {
-		_PPEP = value;
-	}
-	return _peak;
-}
+//bool Sensor::read() {
+//	detect(value);
+//	if (_peak == CREST) {
+//		_PPeak = value;
+//	}
+//	else if (_peak == THROUGH) {
+//		_PPEP = value;
+//	}
+//	return _peak;
+//}
 
 // Detect if the provided sample is a positive or negative peak.
 // Will return 0 if no peak detected, 1 if a positive peak and -1
@@ -75,10 +90,10 @@ int Sensor::detect(float sample) {
 
 	//calculate tidal Volume
 	//tidal Volume = sum of (value *  T_sampling) = sum of (value / f_sampling) 
-	_VolumeAcc = _VolumeAcc + ( abs(sample - _xDev) / 30.0 );
+	_VolumeAcc = _VolumeAcc + ( abs(sample - _xDev) / 30.0f );
 
 	//crest is detected
-	if (_peak = CREST) {
+	if (_peak == CREST) {
 		//assign _PPeak if crest is detected
 		_PPeak = sample;
 
@@ -87,10 +102,10 @@ int Sensor::detect(float sample) {
 		_VolumeAcc = 0.0;
 		
 		//calculate T (wave Periode). T = 1/f_sampling * _countValue;
-		_periode = (float) _countValue / 30.0;
+		_periode = (float) _countValue / 30.0f;
 
 		//calculate breath per minute
-		_breathPerMinute = 60.0 / _periode;
+		_breathPerMinute = 60.0f / _periode;
 
 		//calculate _PAverage every time a crest is detected
 		_PAverage = _sumValue / _countValue;
@@ -101,7 +116,7 @@ int Sensor::detect(float sample) {
 		_countValue = 0;
 	}
 	//through is detected
-	else if (_peak = THROUGH) {
+	else if (_peak == THROUGH) {
 		//assign _PPEP if througn is detected
 		_PPEP = sample;
 	}
@@ -116,9 +131,8 @@ int Sensor::detect(float sample) {
 // Detect if the provided sample is a positive or negative peak.
 // Will return 0 if no peak detected, 1 if a positive peak and -1
 // if a negative peak.
-int Sensor::detect() {
-	detect(value);
-}
+//int Sensor::detect() {
+//}
 
 //return _PPeak value
 float Sensor::PPeak() {

@@ -17,9 +17,9 @@
 #define _PEAKDETECTOR_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
+    #include "arduino.h"
 #else
-	#include "WProgram.h"
+    #include "WProgram.h"
 #endif
 
 #define CREST 1
@@ -36,20 +36,12 @@ public:
     // Will return 0 if no peak detected, 1 if a positive peak and -1
     // if a negative peak.
     virtual int detect(float sample);
-
-    // Detect if the provided sample is a positive or negative peak.
-    // Will return 0 if no peak detected, 1 if a positive peak and -1
-    // if a negative peak.
-    virtual int detect();
     
     // Return the current signal average, useful for debugging.
     float getAvg();
     
     // Return the current signal standard deviation, useful for debugging.
     float getStd();
-
-    //measurement value
-    float value;
 
 protected:
     int _lag;

@@ -4,9 +4,8 @@
 
 #include "PeakDetector.h"
 
-PeakDetector::PeakDetector(const int lag = 5, const float threshold = 3.5, const float influence = 0.5) :
-    _lag(lag), _threshold(threshold), _influence(influence), _avg(0.0), _std(0.0), _primed(false), _index(0)
-{
+PeakDetector::PeakDetector(const int lag, const float threshold, const float influence) :
+    _lag(lag), _threshold(threshold), _influence(influence), _avg(0.0), _std(0.0), _primed(false), _index(0) {
     // Allocate memory for last samples (used during averaging) and set them all to zero.
     _filtered = new float[lag];
     for (int i = 0; i < lag; ++i) {
@@ -37,7 +36,7 @@ int PeakDetector::detect(float sample) {
             result = THROUGH;
         }
         // Save this sample but scaled down based on influence.
-        _filtered[_index] = (_influence * sample) + ((1.0 - _influence) * _filtered[_previousIndex()]);
+        _filtered[_index] = (_influence * sample) + ((1.0f - _influence) * _filtered[_previousIndex()]);
     }
     else {
         // Did not detect a peak, or not yet primed with enough samples.
@@ -58,16 +57,13 @@ int PeakDetector::detect(float sample) {
         // Compute standard deviation of filtered values.
         _std = 0.0;
         for (int i = 0; i < _lag; ++i) {
-            _std += pow(_filtered[i] - _avg, 2.0);
+            _std += pow(_filtered[i] - _avg, 2.0f);
         }
         _std = sqrt(_std / float(_lag));
     }
     return result;
 }
 
-int PeakDetector::detect() {
-    return detect(value);
-}
 
 float PeakDetector::getAvg() {
     // Return the current signal average, useful for debugging.

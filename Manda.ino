@@ -79,8 +79,8 @@ void loop() {
         //if result is 'NOPEAK', then
         //  (7)increment countValue & sumValue
         //  (8)calculate volumeAcc
-        Flow.detect();
-        Pressure.detect();
+        //Flow.detect();
+        //Pressure.detect();
 
         //write result to serial monitor
         Serial.print("Flow PPeak : "); Serial.print(Flow.PPeak());

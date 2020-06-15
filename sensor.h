@@ -3,13 +3,19 @@
 #ifndef _SENSOR_h
 #define _SENSOR_h
 
+//#if defined(ARDUINO) && ARDUINO >= 100
+//	#include "arduino.h"
+//#else
+//	#include "WProgram.h"
+//#endif
+
+#include "PeakDetector.h"
+
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
 #else
 	#include "WProgram.h"
 #endif
-
-#include "PeakDetector.h"
 
 class Sensor : public PeakDetector
 {
@@ -37,6 +43,7 @@ class Sensor : public PeakDetector
 	 float _xDev;
 
 
+
  public:
 	 //constructor
 	 Sensor();
@@ -61,7 +68,7 @@ class Sensor : public PeakDetector
 	 // Detect if the provided sample is a positive or negative peak.
 	 // Will return 0 if no peak detected, 1 if a positive peak and -1
 	 // if a negative peak.
-	 int detect() override;
+	 //int detect() override;
 	 
 	 //return _PPeak value
 	 float PPeak();
@@ -80,6 +87,9 @@ class Sensor : public PeakDetector
 
 	 //return tidal volume
 	 float tidalVolume();
+
+	 //measurement value
+	 float value;
 };
 
 #endif
