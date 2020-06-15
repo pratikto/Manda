@@ -30,6 +30,12 @@
     <ClInclude Include="sensor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PressureSensor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FlowSensor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PeakDetector.cpp">
@@ -39,6 +45,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sensor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PressureSensor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FlowSensor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

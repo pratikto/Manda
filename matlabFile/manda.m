@@ -29,8 +29,10 @@ for i = 1:length(PressureSensor)
 endfor
 
 ##Export sensor conversion
-csvwrite("Flow.csv", Flow);
-csvwrite("Pressure.csv", Pressure);
+dlmwrite ('flow.dat', Flow, "delimiter", ",", "newline", ",\n")
+dlmwrite ('pressure.dat', Pressure, "delimiter", ",", "newline", ",\n")
+##csvwrite("Flow.csv", Flow);
+##csvwrite("Pressure.csv", Pressure);
 
 ####Plot Sensor data and Sensor conversion data
 ##figure('Name', 'Sensor Data');

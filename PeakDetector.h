@@ -53,7 +53,6 @@ protected:
     bool _primed;
     int _index;
 
-
     // Increment the index of the current sample.
     void _incrementIndex();
     // Find the index of the last sample.
