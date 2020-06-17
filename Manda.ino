@@ -27,22 +27,20 @@
 // them back in the filtered values. Should be a value from 0 to 1.0 
 //where smaller values mean peaks have less influence.
 #define INFLUENCE_flow             0.01f   
-#define INFLUENCE_pressure         0.1   
+#define INFLUENCE_pressure         0.1f   
+
+//Sensor initialization
+PressureSensor Pressure(LAG_pressure, THRESHOLD_pressure, INFLUENCE_pressure);
+FlowSensor Flow(LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
 
 #ifdef DEBUG
-    //Sensor initialization
-    PeakDetector Pressure(LAG_pressure, THRESHOLD_pressure, INFLUENCE_pressure);
-    PeakDetector Flow(LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
     float value;    //temporary value register
     float result;   //temporary result register
 #else 
     //Pin configuration
     int pressurePin = A0;
     int flowPin = A1;
-
-    //Sensor initialization
-    PressureSensor Pressure(LAG_pressure, THRESHOLD_pressure, INFLUENCE_pressure);
-    FlowSensor Flow(LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
+    float result;   //temporary result register
 
     //30 Hz square wave 
     bool clock30Hz = 0;
@@ -72,20 +70,38 @@ void setup() {
     sei();
 
 #else
-    for (unsigned int i = 0; i < 6364; i++) {
-        //Flow.value = pgm_read_float(&flowOutput[i]);
-        //Flow.detect();
-        value = pgm_read_float(&flowOutput[i]);
-        Flow.detect(value);
-        //Serial.print(i); Serial.print(", "); Serial.print(Flow.value); Serial.println(",");
-        Serial.print(i); Serial.print(", "); Serial.print(value); Serial.println(",");
-
+    //Do Absolutely Nothing until something is received over the serial port
+    while (!Serial.available()) {     
     }
+
+    Serial.println("Pressure");
     for (unsigned int j = 0; j < 1358; j++) {
-        //Pressure.value = pgm_read_float(&pressureOutput[j]);
         value = pgm_read_float(&pressureOutput[j]);
-        Pressure.detect(value);
-        Serial.print(j); Serial.print(", "); Serial.print(value); Serial.println(",");
+        result = 5 * Pressure.detect(value);
+        //print to Serial monitor. 
+        //then copy it to csv file for further analysis
+        Serial.print(result);
+        Serial.print(",");
+        Serial.print(Pressure.PPeak()); 
+        Serial.print(",");
+        Serial.print(Pressure.PAverage()); 
+        Serial.print(",");
+        Serial.print(Pressure.PPEP()); 
+        Serial.print(",");
+        Serial.print(Pressure.breathPerMinute()); 
+        Serial.println(",");
+    }
+
+    Serial.println("Flow");
+    for (unsigned int i = 0; i < 6364; i++) {
+        value = pgm_read_float(&flowOutput[i]);
+        result = 5 * Flow.detect(value);
+        //print to Serial monitor. 
+        //then copy it to csv file for further analysis
+        Serial.print(result); 
+        Serial.print(",");
+        Serial.print(Pressure.breathPerMinute());
+        Serial.println(",");
     }
 #endif
 }
@@ -114,20 +130,25 @@ void loop() {
         //if result is 'NOPEAK', then
         //  (7)increment countValue & sumValue
         //  (8)calculate volumeAcc
-        Flow.detect();
-        Pressure.detect();
+        result = Pressure.detect(); 
 
-        //write result to serial monitor
-        //Serial.print("Flow PPeak : "); Serial.print(Flow.PPeak());
-        //Serial.print("\tPressure PPeak : "); Serial.print(Pressure.PPeak());
-        //Serial.print("\tFlow PAvg : "); Serial.print(Flow.PAverage());
-        //Serial.print("\tPressure PAvg : "); Serial.print(Pressure.PAverage());
-        //Serial.print("\tFlow PEEP : "); Serial.print(Flow.PPEP());
-        //Serial.print("\tPressure PEEP : "); Serial.print(Pressure.PPEP());
-        //Serial.print("\tFlow BPM : "); Serial.print(Flow.PPEP());
-        //Serial.print("\tPressure BPM : "); Serial.print(Pressure.PPEP());
-        //Serial.print("\tFlow tidal : "); Serial.print(Flow.tidalVolume());
-        //Serial.println();
+        Serial.print(result);
+        Serial.print(",");
+        Serial.print(Pressure.PPeak());
+        Serial.print(",");
+        Serial.print(Pressure.PAverage());
+        Serial.print(",");
+        Serial.print(Pressure.PPEP());
+        Serial.print(",");
+        Serial.print(Pressure.breathPerMinute());
+        Serial.println(",");
+
+        result = Flow.detect();
+
+        Serial.print(result);
+        Serial.print(",");
+        Serial.print(Pressure.breathPerMinute());
+        Serial.println(",");
     }
 #endif
 }

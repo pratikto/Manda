@@ -1,0 +1,35 @@
+
+##Plot Sensor data and Sensor conversion data
+figure('Name', 'Sensor Data');
+axis(1) = subplot(2,2,1);
+hold on;
+plot(FlowSensor, 'r');
+##legend('Flow Sensor');
+xlabel('Count');
+ylabel('Flow');
+title('Flow Sensor');
+hold off;
+axis(2) = subplot(2,2,3);
+hold on;
+plot(Flow, 'b');
+##legend('Flow Sensor Conversion');
+xlabel('Count');
+ylabel('Flow');
+title('Flow Sensor Conversion');
+hold off;
+axis(3) = subplot(2,2,2);
+hold on;
+plot(PressureSensor, 'r');
+##legend('Pressure Sensor');
+xlabel('Count');
+ylabel('Pressure');
+title('Pressure Sensor');
+hold off;
+axis(4) = subplot(2,2,4);
+hold on;
+plot(Pressure, 'b');
+##legend('Pressure Sensor Conversion');
+xlabel('Count');
+ylabel('Pressure');
+title('Pressure Sensor Conversion');
+hold off;

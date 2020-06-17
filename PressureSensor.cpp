@@ -44,17 +44,14 @@ PressureSensor::PressureSensor(const float xDev, const int lag, const float thre
 // Will return 0 if no peak detected, 1 if a positive peak and -1
 // if a negative peak.
 int PressureSensor::detect(float sample) {
+	value = sample;
 	//call detect() function from its base class, PeakDetector.
-	PeakDetector::detect(sample);
-
-	//update sumValue & _countValue
-	_sumValue = _sumValue + sample;
-	_countValue++;
+	_peak = PeakDetector::detect(value);
 
 	//crest is detected
-	if (_peak == CREST) {
+	if ((_prevPeak == CREST) && (_peak == NOPEAK)) {
 		//assign _PPeak if crest is detected
-		_PPeak = sample;
+		_PPeak = _prevValue;
 
 		//calculate T (wave Periode). T = 1/f_sampling * _countValue;
 		_periode = (float)_countValue / 30.0f;
@@ -70,15 +67,24 @@ int PressureSensor::detect(float sample) {
 		_countValue = 0;
 	}
 	//through is detected
-	else if (_peak == THROUGH) {
+	else if ((_prevPeak == THROUGH) && (_peak == NOPEAK)) {
 		//assign _PPEP if througn is detected
-		_PPEP = sample;
+		_PPEP = _prevValue;
 	}
 	//nopeak is detected
 	else {
 
 	}
 
+	//update sumValue & _countValue
+	_sumValue = _sumValue + value;
+	_countValue++;
+
+	//assign previoud register to current register
+	_prevPeak = _peak;
+	_prevValue = value;
+
+	//return current peak indicator
 	return _peak;
 }
 

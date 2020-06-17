@@ -8,6 +8,15 @@ clc;                                % clear the command terminal
 FlowSensor = csvread ("FlowSensor.csv");
 PressureSensor = csvread ("PressureSensor.csv");
 
+#import arduino data
+FlowSignalArdu      = dlmread("FlowArdu.csv", ",", [0 0 6364 0]);
+TidalVolumeArdu     = dlmread("FlowArdu.csv", ",", [0 1 6364 1]);
+PressureSignalArdu  = dlmread("PressureArdu.csv", ",", [0 0 1358 0]);
+PPeakArdu           = dlmread("PressureArdu.csv", ",", [0 1 1358 1]);
+PAverageArdu        = dlmread("PressureArdu.csv", ",", [0 2 1358 2]);
+PPEPArdu            = dlmread("PressureArdu.csv", ",", [0 3 1358 3]);
+BpmArdu             = dlmread("PressureArdu.csv", ",", [0 4 1358 4]);
+
 ##scale Flow sensor data to 0.0 - 5.0
 Flow = zeros(length(FlowSensor),1);
 tFlow = zeros(length(FlowSensor),1);
@@ -33,41 +42,6 @@ dlmwrite ('flow.dat', Flow, "delimiter", ",", "newline", ",\n")
 dlmwrite ('pressure.dat', Pressure, "delimiter", ",", "newline", ",\n")
 ##csvwrite("Flow.csv", Flow);
 ##csvwrite("Pressure.csv", Pressure);
-
-####Plot Sensor data and Sensor conversion data
-##figure('Name', 'Sensor Data');
-##axis(1) = subplot(2,2,1);
-##hold on;
-##plot(FlowSensor, 'r');
-####legend('Flow Sensor');
-##xlabel('Count');
-##ylabel('Flow');
-##title('Flow Sensor');
-##hold off;
-##axis(2) = subplot(2,2,3);
-##hold on;
-##plot(Flow, 'b');
-####legend('Flow Sensor Conversion');
-##xlabel('Count');
-##ylabel('Flow');
-##title('Flow Sensor Conversion');
-##hold off;
-##axis(3) = subplot(2,2,2);
-##hold on;
-##plot(PressureSensor, 'r');
-####legend('Pressure Sensor');
-##xlabel('Count');
-##ylabel('Pressure');
-##title('Pressure Sensor');
-##hold off;
-##axis(4) = subplot(2,2,4);
-##hold on;
-##plot(Pressure, 'b');
-####legend('Pressure Sensor Conversion');
-##xlabel('Count');
-##ylabel('Pressure');
-##title('Pressure Sensor Conversion');
-##hold off;
 
 % Peak detection algorithm Settings
 FlowLag = 100;
@@ -104,54 +78,6 @@ for i = 2:length(FlowSignals)
   PastCount = CurrentCount;
 endfor;
 
-figure('Name', "Flow Peak Detection");
-axis(1) = subplot(2,2,1); 
-hold on;
-x = 1:length(Flow); ix = FlowLag+1:length(Flow);
-area(x(ix),FlowAvg(ix)+FlowThreshold*FlowDev(ix),'FaceColor',[0.9 0.9 0.9],'EdgeColor','none');
-area(x(ix),FlowAvg(ix)-FlowThreshold*FlowDev(ix),'FaceColor',[1 1 1],'EdgeColor','none');
-plot(x(ix),FlowAvg(ix),'LineWidth',1,'Color','cyan','LineWidth',1.5);
-plot(x(ix),FlowAvg(ix)+FlowThreshold*FlowDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(x(ix),FlowAvg(ix)-FlowThreshold*FlowDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(1:length(Flow),Flow,'b');
-xlabel('Count');
-ylabel('Flow');
-axis(3) = subplot(2,2,3);
-hold on;
-stairs(FlowSignals*5,'r','LineWidth',1.5); 
-stairs(_FlowSignals*5,'y','LineWidth',1.5); 
-##legend("FlowSignals", "_FlowSignals");
-xlabel('Count');
-ylabel('Flow');
-axis(4) = subplot(2,2,[2,4]); 
-hold on;
-x = 1:length(Flow); ix = FlowLag+1:length(Flow);
-##area(x(ix),FlowAvg(ix)+FlowThreshold*FlowDev(ix),'FaceColor',[0.9 0.9 0.9],'EdgeColor','none');
-##area(x(ix),FlowAvg(ix)-FlowThreshold*FlowDev(ix),'FaceColor',[1 1 1],'EdgeColor','none');
-##plot(x(ix),FlowAvg(ix),'LineWidth',1,'Color','cyan','LineWidth',1.5);
-##plot(x(ix),FlowAvg(ix)+FlowThreshold*FlowDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-##plot(x(ix),FlowAvg(ix)-FlowThreshold*FlowDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(1:length(Flow),Flow,'b');
-stairs(_FlowSignals*5,'y','LineWidth',1.5);
-stairs(FlowSignals*5,'r','LineWidth',1.5); 
-xlabel('Count');
-ylabel('Flow');
-
-figure('Name', "Flow Peak Detection");
-##subplot(2,1,1); 
-hold on;
-x = 1:length(Flow); ix = FlowLag+1:length(Flow);
-area(x(ix),FlowAvg(ix)+FlowThreshold*FlowDev(ix),'FaceColor',[0.9 0.9 0.9],'EdgeColor','none');
-area(x(ix),FlowAvg(ix)-FlowThreshold*FlowDev(ix),'FaceColor',[1 1 1],'EdgeColor','none');
-plot(x(ix),FlowAvg(ix),'LineWidth',1,'Color','cyan','LineWidth',1.5);
-plot(x(ix),FlowAvg(ix)+FlowThreshold*FlowDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(x(ix),FlowAvg(ix)-FlowThreshold*FlowDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(1:length(Flow),Flow,'b');
-##subplot(2,1,2);
-stairs(_FlowSignals*5,'y','LineWidth',1.5); 
-stairs(FlowSignals*5,'r','LineWidth',1.5); 
-##ylim([-1.5 1.5]);
-
 % Detect peak Pressure data
 [_PressureSignals,PressureAvg,PressureDev] = PeakDetection(Pressure,PressureLag,PressureThreshold,PressureInfluence);
 
@@ -173,50 +99,4 @@ for i = 2:length(PressureSignals)
   PastState = CurrentState;
 endfor;
 
-figure('Name', "Pressure Peak Detection");
-axis(1) = subplot(2,2,1); 
-hold on;
-x = 1:length(Pressure); ix = PressureLag+1:length(Pressure);
-area(x(ix),PressureAvg(ix)+PressureThreshold*PressureDev(ix),'FaceColor',[0.9 0.9 0.9],'EdgeColor','none');
-area(x(ix),PressureAvg(ix)-PressureThreshold*PressureDev(ix),'FaceColor',[1 1 1],'EdgeColor','none');
-plot(x(ix),PressureAvg(ix),'LineWidth',1,'Color','cyan','LineWidth',1.5);
-plot(x(ix),PressureAvg(ix)+PressureThreshold*PressureDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(x(ix),PressureAvg(ix)-PressureThreshold*PressureDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(1:length(Pressure),Pressure,'b');
-xlabel('Count');
-ylabel('Pressure');
-axis(3) = subplot(2,2,3);
-hold on;
-stairs(PressureSignals*5,'r','LineWidth',1.5); 
-stairs(_PressureSignals*5,'y','LineWidth',1.5); 
-##legend("PressureSignals", "_PressureSignals");
-xlabel('Count');
-ylabel('Pressure');
-axis(4) = subplot(2,2,[2,4]); 
-hold on;
-x = 1:length(Pressure); ix = PressureLag+1:length(Pressure);
-##area(x(ix),PressureAvg(ix)+PressureThreshold*PressureDev(ix),'FaceColor',[0.9 0.9 0.9],'EdgeColor','none');
-##area(x(ix),PressureAvg(ix)-PressureThreshold*PressureDev(ix),'FaceColor',[1 1 1],'EdgeColor','none');
-##plot(x(ix),PressureAvg(ix),'LineWidth',1,'Color','cyan','LineWidth',1.5);
-##plot(x(ix),PressureAvg(ix)+PressureThreshold*PressureDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-##plot(x(ix),PressureAvg(ix)-PressureThreshold*PressureDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(1:length(Pressure),Pressure,'b');
-stairs(_PressureSignals*5,'y','LineWidth',1.5);
-stairs(PressureSignals*5,'r','LineWidth',1.5); 
-xlabel('Count');
-ylabel('Pressure');
-
-figure('Name', "Pressure Peak Detection");
-##subplot(2,1,1); 
-hold on;
-x = 1:length(Pressure); ix = PressureLag+1:length(Pressure);
-area(x(ix),PressureAvg(ix)+PressureThreshold*PressureDev(ix),'FaceColor',[0.9 0.9 0.9],'EdgeColor','none');
-area(x(ix),PressureAvg(ix)-PressureThreshold*PressureDev(ix),'FaceColor',[1 1 1],'EdgeColor','none');
-plot(x(ix),PressureAvg(ix),'LineWidth',1,'Color','cyan','LineWidth',1.5);
-plot(x(ix),PressureAvg(ix)+PressureThreshold*PressureDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(x(ix),PressureAvg(ix)-PressureThreshold*PressureDev(ix),'LineWidth',1,'Color','green','LineWidth',1.5);
-plot(1:length(Pressure),Pressure,'b');
-##subplot(2,1,2);
-stairs(_PressureSignals*5,'y','LineWidth',1.5); 
-stairs(PressureSignals*5,'r','LineWidth',1.5); 
-##ylim([-1.5 1.5]);
+#call figure

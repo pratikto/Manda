@@ -11,27 +11,16 @@ class FlowSensor :
     public PeakDetector
 {
 protected:
-	//crest amplitudo. this value will be updated every time a new crest is detected
-	float _PPeak;
-	//wave average value. this value will be updated each cycle
-	float _PAverage;
-	//trough amplitudo. this value will be updated every time a new trough is detected
-	float _PPEP;
-	//peak indicator
 	int _peak;
-	//sum of value in one periode
-	float _sumValue;
-	//value counter in one periode 
-	int _countValue;
-	//wave periode
-	float _periode;
-	//breath per minute
-	float _breathPerMinute;
+	//previous peak indicator
+	int _prevPeak;
 	//absolute area of tidal volume
 	float _tidalVolume;
 	float _VolumeAcc;
 	//axis deviation
 	float _xDev;
+	//previous measurement value
+	float _prevValue;
 
 
 
@@ -60,14 +49,14 @@ public:
 	// if a negative peak.
 	//int detect() override;
 
-	//return _PPeak value
-	float PPeak();
+	////return _PPeak value
+	//float PPeak();
 
-	//return PMean value
-	float PAverage();
+	////return PMean value
+	//float PAverage();
 
-	//return PPEP value
-	float PPEP();
+	////return PPEP value
+	//float PPEP();
 
 	//return crest, through, or no-peak
 	int peak();

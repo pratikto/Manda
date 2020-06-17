@@ -19,6 +19,8 @@ protected:
 	float _PPEP;
 	//peak indicator
 	int _peak;
+	//previous peak indicator
+	int _prevPeak;
 	//sum of value in one periode
 	float _sumValue;
 	//value counter in one periode 
@@ -27,6 +29,8 @@ protected:
 	float _periode;
 	//breath per minute
 	float _breathPerMinute;
+	//previous measurement value
+	float _prevValue;
 
 
 
