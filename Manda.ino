@@ -25,13 +25,16 @@
 
 // Scale down peak values to this percent influence when storing 
 // them back in the filtered values. Should be a value from 0 to 1.0 
-//where smaller values mean peaks have less influence.
+// where smaller values mean peaks have less influence.
 #define INFLUENCE_flow             0.01f   
-#define INFLUENCE_pressure         0.1f   
+#define INFLUENCE_pressure         0.1f  
+
+//Initialize Deviation of x axis for Tidal volume calculation
+#define XDeviation 0.0f
 
 //Sensor initialization
 PressureSensor Pressure(LAG_pressure, THRESHOLD_pressure, INFLUENCE_pressure);
-FlowSensor Flow(LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
+FlowSensor Flow(XDeviation, LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
 
 #ifdef DEBUG
     float value;    //temporary value register
