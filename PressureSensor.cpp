@@ -4,6 +4,7 @@ PressureSensor::PressureSensor() :
 	PeakDetector(_lag = 5, _threshold = 3.5, _influence = 0.5)
 {
 	_breathPerMinute = 0.0;
+	_breath = 0;
 	_countValue = 0;
 	_sumValue = 0.0;
 	_periode = 0.0;
@@ -17,6 +18,7 @@ PressureSensor::PressureSensor(const int lag, const float threshold, const float
 	PeakDetector(_lag = lag, _threshold = threshold, _influence = influence)
 {
 	_breathPerMinute = 0.0;
+	_breath = 0;
 	_countValue = 0;
 	_sumValue = 0.0;
 	_periode = 0.0;
@@ -31,6 +33,7 @@ PressureSensor::PressureSensor(const float xDev, const int lag, const float thre
 	PeakDetector(_lag = lag, _threshold = threshold, _influence = influence)
 {
 	_breathPerMinute = 0.0;
+	_breath = 0;
 	_countValue = 0;
 	_sumValue = 0.0;
 	_periode = 0.0;
@@ -57,7 +60,10 @@ int PressureSensor::detect(float sample) {
 		_periode = (float)_countValue / 30.0f;
 
 		//calculate breath per minute
-		_breathPerMinute = 60.0f / _periode;
+		//_breathPerMinute = 60.0f / _periode;
+
+		//increment breath
+		_breath++;
 
 		//calculate _PAverage every time a crest is detected
 		_PAverage = _sumValue / _countValue;
@@ -118,4 +124,19 @@ int PressureSensor::peak() {
 //return breath per minute value
 float PressureSensor::breathPerMinute() {
 	return _breathPerMinute;
+}
+
+//set breath per minute value
+void PressureSensor::breathPerMinute(uint8_t value) {
+	_breathPerMinute = value;
+}
+
+//return total breath
+uint8_t PressureSensor::breath() {
+	return _breath;
+}
+
+//set breath value
+void PressureSensor::breath(uint8_t value) {
+	_breath = value;
 }

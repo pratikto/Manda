@@ -57,6 +57,10 @@ FlowSensor Flow(XDeviation, LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
         FracOneMinute++;
         if (FracOneMinute == 60) {
             oneMinute = true;
+            //measure breath per minute
+            Pressure.breathPerMinute(Pressure.breath());
+            //reset total breath
+            Pressure.breath(0); 
             FracOneMinute = 0;
         }
         else {

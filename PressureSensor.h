@@ -27,8 +27,10 @@ protected:
 	int _countValue;
 	//wave periode
 	float _periode;
-	//breath per minute
-	float _breathPerMinute;
+	//total breath
+	uint8_t _breath;
+	//breath per minute value
+	uint8_t _breathPerMinute;
 	//previous measurement value
 	float _prevValue;
 
@@ -73,6 +75,15 @@ public:
 
 	//return breath per minute value
 	float breathPerMinute();
+
+	//set breath per minute value
+	void breathPerMinute(uint8_t value);
+
+	//return total breath
+	uint8_t breath();
+
+	//set breath value
+	void breath(uint8_t value);
 
 	//measurement value
 	float value;
