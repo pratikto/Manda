@@ -11,7 +11,7 @@
 // Uncomment this to output a stream of debug information
 // from peak detector.  Use the serial
 // plotter to view the graph of these 4 values:
-#define DEBUG
+//#define DEBUG
 
 // Configure peak detector behavior:
 
@@ -42,13 +42,29 @@ FlowSensor Flow(LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
     int flowPin = A1;
     float result;   //temporary result register
 
-    //30 Hz square wave 
-    bool clock30Hz = 0;
+    //timing configuration
+    bool oneMinute          = false;
+    uint8_t FracOneMinute   = 0;
+    bool readSample         = false;
+
 
     //interrupt service routine for timer 1
-    //generate 30 Hz square wave clock
+    //generate 1 Hz signal
     ISR(TIMER1_COMPA_vect) {
-        clock30Hz = !clock30Hz;
+        FracOneMinute++;
+        if (FracOneMinute == 60) {
+            oneMinute = true;
+            FracOneMinute = 0;
+        }
+        else {
+            oneMinute = false;
+        }
+    }    
+    
+    //interrupt service routine for timer 2
+    //trigger sampling data instruction
+    ISR(TIMER2_COMPA_vect) {
+        readSample = true;
     }
 #endif
 
@@ -64,7 +80,10 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     
     //timer1 initialization
-    generate60Hz_Timer1();
+    generate1Hz_Timer1();
+
+    //timer2 initialization
+    generate222Hz_Timer2;
     
     //allow interrupts
     sei();
@@ -109,9 +128,12 @@ void setup() {
 // the loop function runs over and over again until power down or reset
 void loop() {
 #ifndef DEBUG
-    if (clock30Hz) {
-        //FSampling clock indicator
-        digitalWrite(LED_BUILTIN, clock30Hz);
+    //FSampling clock indicator
+    digitalWrite(LED_BUILTIN, oneMinute);
+
+    if (readSample) {
+        //turn off sampling trigger
+        readSample = false;
 
         //Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
         Flow.value = analogRead(flowPin) * (5.0 / 1023.0);
