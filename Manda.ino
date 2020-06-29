@@ -68,14 +68,14 @@ FlowSensor Flow2(XDeviation2);
             Pressure.breath(0);
             
             //assign Volume tidal
-            //tidalVolume = totalAcc;
+            tidalVolume = totalAcc;
 
             //reset accumulator
-            //totalAcc = 0.0f;
+            totalAcc = 0.0f;
 
             //reset volume accumulator flow 1 and 2
-            //Flow1.VolumeAcc(0.0f);
-            //Flow2.VolumeAcc(0.0f);
+            Flow1.VolumeAcc(0.0f);
+            Flow2.VolumeAcc(0.0f);
             
             //reset fraction of minute
             FracOneMinute = 0;
