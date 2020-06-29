@@ -13,28 +13,29 @@
 // plotter to view the graph of these 4 values:
 //#define DEBUG
 
-// Configure peak detector behavior:
-
+// Configure peak detector behavior://
 // Lag, how large is the buffer of filtered samples. Must be an integer value!
-#define LAG_flow                 100
 #define LAG_pressure             10
-
 // Number of standard deviations above average a value needs to be to be considered a peak.
-#define THRESHOLD_flow            3.8f
 #define THRESHOLD_pressure        4.0f
-
 // Scale down peak values to this percent influence when storing 
 // them back in the filtered values. Should be a value from 0 to 1.0 
 // where smaller values mean peaks have less influence.
-#define INFLUENCE_flow             0.01f   
 #define INFLUENCE_pressure         0.1f  
 
 //Initialize Deviation of x axis for Tidal volume calculation
-#define XDeviation 0.0f
+#define XDeviation1 0.0f
+#define XDeviation2 0.0f
+
+//Tidal Volume from flow sensor 1 and 2
+float tidalVolume = 0.0f;
+//Total Volume accumulator
+float totalAcc = 0.0f;
 
 //Sensor initialization
 PressureSensor Pressure(LAG_pressure, THRESHOLD_pressure, INFLUENCE_pressure);
-FlowSensor Flow(XDeviation, LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
+FlowSensor Flow1(XDeviation1);
+FlowSensor Flow2(XDeviation2);
 
 #ifdef DEBUG
     float value;    //temporary value register
@@ -42,7 +43,8 @@ FlowSensor Flow(XDeviation, LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
 #else 
     //Pin configuration
     int pressurePin = A0;
-    int flowPin = A1;
+    int flow1Pin = A1;
+    int flow2Pin = A2;
     float result;   //temporary result register
 
     //timing configuration
@@ -55,12 +57,27 @@ FlowSensor Flow(XDeviation, LAG_flow, THRESHOLD_flow, INFLUENCE_flow);
     //generate 1 Hz signal
     ISR(TIMER1_COMPA_vect) {
         FracOneMinute++;
+        //1 minute
         if (FracOneMinute == 60) {
             oneMinute = true;
+            
             //measure breath per minute
             Pressure.breathPerMinute(Pressure.breath());
+            
             //reset total breath
-            Pressure.breath(0); 
+            Pressure.breath(0);
+            
+            //assign Volume tidal
+            //tidalVolume = totalAcc;
+
+            //reset accumulator
+            //totalAcc = 0.0f;
+
+            //reset volume accumulator flow 1 and 2
+            //Flow1.VolumeAcc(0.0f);
+            //Flow2.VolumeAcc(0.0f);
+            
+            //reset fraction of minute
             FracOneMinute = 0;
         }
         else {
@@ -143,7 +160,8 @@ void loop() {
         readSample = false;
 
         //Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
-        Flow.value = analogRead(flowPin) * (5.0 / 1023.0);
+        Flow1.value = analogRead(flow1Pin) * (5.0 / 1023.0);
+        Flow2.value = analogRead(flow2Pin) * (5.0 / 1023.0);
         Pressure.value = analogRead(pressurePin) * (5.0 / 1023.0);
 
         //detect crest, throuh, and no peak.
@@ -172,11 +190,15 @@ void loop() {
         Serial.print(Pressure.breathPerMinute());
         Serial.println(",");
 
-        result = Flow.detect();
+        Flow1.detect();
+        Flow2.detect();
 
-        Serial.print(result);
+        //calculate tidal volume
+        totalAcc = Flow1.VolumeAcc() + Flow2.VolumeAcc();
+
+        Serial.print(totalAcc);
         Serial.print(",");
-        Serial.print(Pressure.breathPerMinute());
+        Serial.print(tidalVolume);
         Serial.println(",");
     }
 #endif
