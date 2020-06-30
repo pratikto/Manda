@@ -95,7 +95,7 @@ FlowSensor Flow2(XDeviation2);
 // the setup function runs once when you press reset or power the board
 void setup() {
     // Initialize serial output for debugging and plotting.
-    Serial.begin(2000000);
+    Serial.begin(9600);
 #ifndef DEBUG
     //stop interrupts
     cli();
