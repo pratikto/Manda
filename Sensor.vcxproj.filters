@@ -27,9 +27,6 @@
     <ClInclude Include="__vm\.Sensor.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sensor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PressureSensor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -42,9 +39,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="functCollection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sensor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PressureSensor.cpp">

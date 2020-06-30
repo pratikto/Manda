@@ -117,7 +117,6 @@
     <ClInclude Include="PeakDetector.h" />
     <ClInclude Include="PressureSensor.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="sensor.h" />
     <ClInclude Include="__vm\.Sensor.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
@@ -125,7 +124,6 @@
     <ClCompile Include="functCollection.cpp" />
     <ClCompile Include="PeakDetector.cpp" />
     <ClCompile Include="PressureSensor.cpp" />
-    <ClCompile Include="sensor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Sensor.rc" />
