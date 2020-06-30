@@ -6,7 +6,10 @@
 #include "PressureSensor.h"
 #include "FlowSensor.h"
 #include "functCollection.h"
-//#include "PeakDetector.h"
+
+//frequency clock configuration for sampling triggering and one minutes triggering
+#define Fsampling   222
+#define oneHz       1
 
 // Uncomment this to output a stream of debug information
 // from peak detector.  Use the serial
@@ -48,29 +51,29 @@ FlowSensor Flow2(XDeviation2);
     float result;   //temporary result register
 
     //timing configuration
-    bool oneMinute          = false;
-    uint8_t FracOneMinute   = 0;
-    bool readSample         = false;
+    bool oneMinute  = false;
+    uint8_t seconds = 0;
+    bool readSample = false;
 
 #endif
 
 // the setup function runs once when you press reset or power the board
 void setup() {
     // Initialize serial output for debugging and plotting.
-    Serial.begin(9600);
+    Serial.begin(2000000);
 #ifndef DEBUG
     //stop interrupts
     cli();
 
     // initialize digital pin LED_BUILTIN as FSampling clock indicator
     pinMode(LED_BUILTIN, OUTPUT);
-    
-    //timer1 initialization
-    generate1Hz_Timer1();
 
-    //timer2 initialization
-    generate222Hz_Timer2;
-    
+    //timer0 initialization
+    initTimer0(Fsampling);
+
+    //timer1 initialization
+    initTimer1(oneHz);
+        
     //allow interrupts
     sei();
 
@@ -113,12 +116,18 @@ void setup() {
 
 #ifndef DEBUG
 
+//interrupt service routine for timer 2
+//trigger sampling data instruction
+ISR(TIMER0_COMPA_vect) {
+    readSample = true;
+}
+
 //interrupt service routine for timer 1
 //generate 1 Hz signal
 ISR(TIMER1_COMPA_vect) {
-    FracOneMinute++;
+    seconds++;
     //1 minute
-    if (FracOneMinute == 60) {
+    if (seconds == 60) {
         oneMinute = true;
 
         //measure breath per minute
@@ -138,17 +147,11 @@ ISR(TIMER1_COMPA_vect) {
         Flow2.VolumeAcc(0.0f);
 
         //reset fraction of minute
-        FracOneMinute = 0;
+        seconds = 0;
     }
     else {
         oneMinute = false;
     }
-}
-
-//interrupt service routine for timer 2
-//trigger sampling data instruction
-ISR(TIMER2_COMPA_vect) {
-    readSample = true;
 }
 #endif
 
@@ -165,7 +168,7 @@ void loop() {
         Flow2.value = analogRead(flow2Pin) * (5.0 / 1023.0);
         Pressure.value = analogRead(pressurePin) * (5.0 / 1023.0);
 
-        //detect crest, throuh, and no peak.
+        //detect pressure sensor
         //
         //if result is 'CREST', then 
         //  (1)the voltage measurement is stored in PPeak
