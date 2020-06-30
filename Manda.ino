@@ -52,44 +52,6 @@ FlowSensor Flow2(XDeviation2);
     uint8_t FracOneMinute   = 0;
     bool readSample         = false;
 
-
-    //interrupt service routine for timer 1
-    //generate 1 Hz signal
-    ISR(TIMER1_COMPA_vect) {
-        FracOneMinute++;
-        //1 minute
-        if (FracOneMinute == 60) {
-            oneMinute = true;
-            
-            //measure breath per minute
-            Pressure.breathPerMinute(Pressure.breath());
-            
-            //reset total breath
-            Pressure.breath(0);
-            
-            //assign Volume tidal
-            tidalVolume = totalAcc;
-
-            //reset accumulator
-            totalAcc = 0.0f;
-
-            //reset volume accumulator flow 1 and 2
-            Flow1.VolumeAcc(0.0f);
-            Flow2.VolumeAcc(0.0f);
-            
-            //reset fraction of minute
-            FracOneMinute = 0;
-        }
-        else {
-            oneMinute = false;
-        }
-    }    
-    
-    //interrupt service routine for timer 2
-    //trigger sampling data instruction
-    ISR(TIMER2_COMPA_vect) {
-        readSample = true;
-    }
 #endif
 
 // the setup function runs once when you press reset or power the board
@@ -149,6 +111,47 @@ void setup() {
 #endif
 }
 
+#ifndef DEBUG
+
+//interrupt service routine for timer 1
+//generate 1 Hz signal
+ISR(TIMER1_COMPA_vect) {
+    FracOneMinute++;
+    //1 minute
+    if (FracOneMinute == 60) {
+        oneMinute = true;
+
+        //measure breath per minute
+        Pressure.breathPerMinute(Pressure.breath());
+
+        //reset total breath
+        Pressure.breath(0);
+
+        //assign Volume tidal
+        tidalVolume = totalAcc;
+
+        //reset accumulator
+        totalAcc = 0.0f;
+
+        //reset volume accumulator flow 1 and 2
+        Flow1.VolumeAcc(0.0f);
+        Flow2.VolumeAcc(0.0f);
+
+        //reset fraction of minute
+        FracOneMinute = 0;
+    }
+    else {
+        oneMinute = false;
+    }
+}
+
+//interrupt service routine for timer 2
+//trigger sampling data instruction
+ISR(TIMER2_COMPA_vect) {
+    readSample = true;
+}
+#endif
+
 // the loop function runs over and over again until power down or reset
 void loop() {
 #ifndef DEBUG
@@ -156,8 +159,6 @@ void loop() {
     digitalWrite(LED_BUILTIN, oneMinute);
 
     if (readSample) {
-        //turn off sampling trigger
-        readSample = false;
 
         //Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
         Flow1.value = analogRead(flow1Pin) * (5.0 / 1023.0);
@@ -190,6 +191,7 @@ void loop() {
         Serial.print(Pressure.breathPerMinute());
         Serial.println(",");
 
+        //Detect Flow sensor 1 and 2
         Flow1.detect();
         Flow2.detect();
 
@@ -200,6 +202,9 @@ void loop() {
         Serial.print(",");
         Serial.print(tidalVolume);
         Serial.println(",");
+
+        //turn off sampling trigger
+        readSample = false;
     }
 #endif
 }
