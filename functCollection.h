@@ -9,14 +9,17 @@
 	#include "WProgram.h"
 #endif
 
+
 //Timer & timer interrupt configuration
-#define samplingRate    = 30 //Hz
-#define megaFrequency   = 16000000 //Hz
-#define prescalerTimer  = 1024
+#define clock	16000000uL
 
+//configure timer 0, prescaler 1024
+//range from 15,625 Hz to 61.275 Hz
+void initTimer0(int freq);
 
-void generate222Hz_Timer2();
-void generate1Hz_Timer1();
+//configure timer 1, prescaler 1024
+//range from 15,625 Hz to 0.238 Hz
+void initTimer1(int freq);
 
 const float flowOutput[] PROGMEM = {
 0,
